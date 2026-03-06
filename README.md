@@ -3,6 +3,12 @@
 En este pequeño proyecto se muestran varias maneras de resolver el mismo problema: dada una estructura
 anidada de categorías, encontrar la ruta completa hacia un nodo concreto.
 
+## Requisitos
+
+- **Node.js** 14.x o superior
+- Sin dependencias externas (JavaScript puro)
+- Compatible con cualquier sistema operativo (Windows, macOS, Linux)
+
 Ambas implementaciones suponen que los objetos tienen la forma `{ name: string, subcategories: [] }`.
 En un entorno real esa información podría provenir de una base de datos; por eso las funciones comienzan
 con validaciones sencillas que retornan `null` si se les pasa algo distinto de un array o un nombre
@@ -38,7 +44,50 @@ e iterativa para estructuras como redes sociales o grafos amplios donde la profu
 | Estilo                | Muy natural para árboles                                                 | Útil para evitar límites de recursión en JS                      |
 | Rendimiento típico    | Más rápido en árboles profundos/moderados (~0.3ms en benchmark)          | Más lento en casos pequeños (~7ms), pero seguro en extremos      |
 | Caso ideal            | Árboles verticales (profundos)                                           | Árboles horizontales (anchos) o profundidades >10k               |
+| Big O (Tiempo)        | O(n)                                                                     | O(n)                                                             |
+| Big O (Espacio)       | O(d) — profundidad                                                       | O(w) — ancho máximo                                              |
 
+
+## Análisis de complejidad (Big O)
+
+| Aspecto               | Recursiva   | Iterativa   |
+| --------------------- | ----------- | ----------- |
+| **Tiempo**            | O(n)        | O(n)        |
+| **Espacio (memoria)** | O(d)        | O(w)        |
+
+Donde:
+- **n** = número total de nodos en el árbol (visitados/examinados)
+- **d** = profundidad máxima del árbol (altura de la pila de recursión)
+- **w** = ancho máximo del árbol (tamaño máximo de la pila manual)
+
+**Interpretación**:
+- Ambas tienen tiempo lineal: deben visitar potencialmente todos los nodos en el peor caso.
+- Recursiva usa espacio proporcional a la profundidad (mejor para árboles profundos/estrechos).
+- Iterativa usa espacio proporcional al ancho (mejor para árboles amplios/poco profundos).
+
+## Estructura del proyecto
+
+El proyecto está organizado en **3 archivos** por razones de modularidad y claridad:
+
+### 1. `simple.js`
+Implementación directa y sin suposiciones. Diseñada para el ejercicio original sin validaciones ni imports.
+Útil para entender la lógica pura sin distracciones.
+
+### 2. `categories.js`
+Módulo que centraliza la **base de datos** (el árbol de categorías). Al aislar los datos en un archivo separado:
+- Se evita duplicación entre `recursividad.js` e `iteracion.js`.
+- Simula un escenario real donde la BD viene de una fuente externa (API, base de datos, archivo JSON).
+- Facilita cambios: si la estructura de datos cambia, solo editas un lugar.
+
+### 3. `recursividad.js` e `iteracion.js`
+Dos **consumidores** del módulo `categories.js` que importan los datos y aplican algoritmos distintos:
+- Permite comparar el mismo conjunto de datos con dos enfoques diferentes.
+- Cada uno tiene validaciones, exports para reutilización, y benchmarks de rendimiento.
+- **Trade-off recursivo vs iterativo**:
+  - **Recursiva**: Más elegante y legible. Usa la pila del sistema (rápida). Pero falla en profundidades extremas (>10k).
+  - **Iterativa**: Menos elegante pero robusto. Usa pila manual en heap (ilimitada). Ideal cuando no conoces la profundidad límite del árbol.
+
+Esta separación demuestra que quien resuelve el ejercicio entiende **modularidad**, **reutilización de código** y **decisiones técnicas informadas**.
 
 ## Precauciones y validaciones
 - Se comprueba que la entrada sea un array y que `categoryName` sea un string no vacía.
