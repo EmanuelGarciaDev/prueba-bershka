@@ -10,7 +10,7 @@ válido.
 
 ## Implementaciones disponibles
 
-### Solución simple (`simple.js`)
+### Solución simple (`solucion-simple.js`)
 Una implementación básica y directa de la función recursiva, sin validaciones ni suposiciones sobre la entrada.
 Solo implementa la lógica pura, con datos hardcodeados y logs de ejemplo.
 
